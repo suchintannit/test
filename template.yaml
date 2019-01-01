@@ -37,6 +37,8 @@ Resources:
       Tracing: Active
       Policies:
         - AWSXrayWriteOnlyAccess
+        - LambdaInvokePolicy:
+            FunctionName: !Ref functionC23D6BE1
       Events:
         apiA644A48DGET:
           Type: Api
@@ -44,8 +46,27 @@ Resources:
             Path: /
             Method: GET
             RestApiId: !Ref apiA644A48D
+      Environment:
+        Variables:
+          FUNCTION_NAME: !Ref functionC23D6BE1
+          FUNCTION_ARN: !GetAtt functionC23D6BE1.Arn
     Metadata:
       StackeryName: getwelcome
+  functionC23D6BE1:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-functionC23D6BE1
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: functionC23D6BE1
+      CodeUri: src/functionC23D6BE1
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
 Parameters:
   StackTagName:
     Type: String
